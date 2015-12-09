@@ -1,0 +1,12 @@
+---
+- name: Download and install java-1.7.0-openjdk and lsof
+  yum: name={{ item }} state=installed
+  with_items:
+  - java-1.7.0-openjdk
+  - lsof
+
+- name: Create the Solr systemd service file
+  template: src=solr.service.j2 dest=/etc/systemd/system/solr.service owner=solr group=solr mode=0644
+  notify: 
+  - reload systemd
+  - restart solr
