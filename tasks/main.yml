@@ -1,2 +1,32 @@
 ---
-# tasks file for solr
+- name: Create the solr group
+  group: name=solr state=present system=yes
+
+- name: Create the solr user
+  user: name=solr groups=solr append=yes
+
+- name: Check if the version of Solr already exists
+  stat: path=/opt/solr-{{ solr_version }}
+  register: solr_path
+
+- name: Download Solr
+  get_url: url=http://archive.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz dest=/tmp/solr-{{ solr_version }}.tgz
+  when: solr_path.stat.exists == False
+
+- name: Extract Solr
+  unarchive: src=/tmp/solr-{{ solr_version }}.tgz dest=/opt copy=no owner=solr group=solr
+  when: solr_path.stat.exists == False
+
+- name: Create a symlink for /opt/solr
+  file: src=/opt/solr-{{ solr_version }} dest=/opt/solr owner=solr group=solr state=link
+  when: solr_path.stat.exists == False
+
+- name: Create the Solr home dir
+  file: path={{ solr_home }} state=directory owner=solr group=solr mode=0755
+
+# CentOS
+- include: centos.yml
+  when: ansible_distribution == 'CentOS'
+
+- name: Ensure Solr is started and enabled on boot
+  service: name=solr state=started enabled=yes
