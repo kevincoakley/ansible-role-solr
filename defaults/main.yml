@@ -1,2 +1,6 @@
 ---
-# defaults file for solr
+solr_version: 5.3.1
+solr_zookeeper_connect_string: 127.0.0.1:2181/solr
+solr_home: /mnt/solr/solr
+solr_port: 8983
+solr_memory: 512m
