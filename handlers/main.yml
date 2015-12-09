@@ -1,2 +1,6 @@
 ---
-# handlers file for solr
+- name: reload systemd
+  command: systemctl daemon-reload
+
+- name: restart solr
+  service: name=solr state=restarted
