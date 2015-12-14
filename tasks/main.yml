@@ -24,9 +24,9 @@
 - name: Create the Solr home dir
   file: path={{ solr_home }} state=directory owner=solr group=solr mode=0755
 
-# CentOS
-- include: centos.yml
-  when: ansible_distribution == 'CentOS'
+# RedHat 
+- include: RedHat.yml
+  when: ansible_os_family == 'RedHat'
 
 - name: Ensure Solr is started and enabled on boot
   service: name=solr state=started enabled=yes
