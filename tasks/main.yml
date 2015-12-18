@@ -1,4 +1,17 @@
 ---
+- name: Include OS family specific variables
+  include_vars: "{{ ansible_os_family }}.yml"
+
+- name: Download and install yum packages
+  yum: name={{ item }} state=installed
+  with_items: solr_packages
+  when: ansible_os_family == "RedHat"
+
+- name: Download and install apt-get packages 
+  apt: name={{ item }} state=installed
+  with_items: solr_packages
+  when: ansible_os_family == "Debian"
+
 - name: Create the solr group
   group: name=solr state=present system=yes
 
@@ -24,9 +37,11 @@
 - name: Create the Solr home dir
   file: path={{ solr_home }} state=directory owner=solr group=solr mode=0755
 
-# RedHat 
-- include: RedHat.yml
-  when: ansible_os_family == 'RedHat'
+- name: Create the Solr systemd service file
+  template: src=solr.service.j2 dest=/etc/systemd/system/solr.service owner=solr group=solr mode=0644
+  notify: 
+  - reload systemd
+  - restart solr
 
 - name: Ensure Solr is started and enabled on boot
   service: name=solr state=started enabled=yes
