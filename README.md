@@ -1,5 +1,7 @@
-Ansible Role: Solr
-=========
+ansible-role-solr
+=================
+
+[![Build Status](https://travis-ci.org/kevincoakley/ansible-role-solr.svg?branch=master)](https://travis-ci.org/kevincoakley/ansible-role-solr)
 
 An Ansible role that installs Apache Solr in either a standalone or replicated environment. Test with Solr version 5.3.1.
 
