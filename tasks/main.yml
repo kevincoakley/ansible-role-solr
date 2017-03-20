@@ -2,15 +2,9 @@
 - name: Include OS family specific variables
   include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Download and install yum packages
-  yum: name={{ item }} state=installed
-  with_items: solr_packages
-  when: ansible_os_family == "RedHat"
-
-- name: Download and install apt-get packages 
-  apt: name={{ item }} state=installed
-  with_items: solr_packages
-  when: ansible_os_family == "Debian"
+- name: Install common packages
+  package: name={{ item }}
+  with_items: "{{ solr_packages }}"
 
 - name: Create the solr group
   group: name=solr state=present system=yes
@@ -23,7 +17,7 @@
   register: solr_path
 
 - name: Download Solr
-  get_url: url=http://archive.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz dest=/tmp/solr-{{ solr_version }}.tgz
+  get_url: url={{ solr_download_url }} dest=/tmp/solr-{{ solr_version }}.tgz
   when: solr_path.stat.exists == False
 
 - name: Extract Solr
@@ -36,6 +30,22 @@
 
 - name: Create the Solr home dir
   file: path={{ solr_home }} state=directory owner=solr group=solr mode=0755
+
+- name: Copy the solr config to the solr home directory
+  copy:
+    src: "{{ role_path }}/files/solr.xml"
+    dest: "{{ solr_home }}/solr.xml"
+    owner: solr
+    group: solr
+    mode: 0400
+
+- name: Copy the zookeeper config to the solr home directory
+  copy:
+    src: "{{ role_path }}/files/zoo.cfg"
+    dest: "{{ solr_home }}/zoo.cfg"
+    owner: solr
+    group: solr
+    mode: 0400
 
 - name: Create the Solr systemd service file
   template: src=solr.service.j2 dest=/etc/systemd/system/solr.service owner=solr group=solr mode=0644

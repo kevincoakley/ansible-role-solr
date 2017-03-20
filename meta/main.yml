@@ -3,15 +3,14 @@ galaxy_info:
   author: Kevin Coakley
   description: Apache Lucene Solr
   license: license (GPLv2, CC-BY, etc)
-  min_ansible_version: 1.4
+  min_ansible_version: 2.0
   platforms:
   - name: EL
     versions:
     - 7
   - name: Ubuntu
     versions:
-    - vivid
-    - wily
+    - xenial
   categories:
   - database
 dependencies: []
