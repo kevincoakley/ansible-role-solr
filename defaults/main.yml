@@ -1,7 +1,7 @@
 ---
 solr_version: 5.3.1
-solr_zookeeper_connect_string: 127.0.0.1:2181/solr
 solr_download_url: http://archive.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz
+solr_zookeeper_connect_string:
 solr_home: /mnt/solr/solr
 solr_port: 8983
 solr_memory: 512m
