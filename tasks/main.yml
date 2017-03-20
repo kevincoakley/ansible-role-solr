@@ -2,15 +2,9 @@
 - name: Include OS family specific variables
   include_vars: "{{ ansible_os_family }}.yml"
 
-- name: Download and install yum packages
-  yum: name={{ item }} state=installed
-  with_items: solr_packages
-  when: ansible_os_family == "RedHat"
-
-- name: Download and install apt-get packages 
-  apt: name={{ item }} state=installed
-  with_items: solr_packages
-  when: ansible_os_family == "Debian"
+- name: Install common packages
+  package: name={{ item }}
+  with_items: "{{ solr_packages }}"
 
 - name: Create the solr group
   group: name=solr state=present system=yes
