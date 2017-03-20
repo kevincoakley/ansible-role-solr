@@ -31,6 +31,22 @@
 - name: Create the Solr home dir
   file: path={{ solr_home }} state=directory owner=solr group=solr mode=0755
 
+- name: Copy the solr config to the solr home directory
+  copy:
+    src: "{{ role_path }}/files/solr.xml"
+    dest: "{{ solr_home }}/solr.xml"
+    owner: solr
+    group: solr
+    mode: 0400
+
+- name: Copy the zookeeper config to the solr home directory
+  copy:
+    src: "{{ role_path }}/files/zoo.cfg"
+    dest: "{{ solr_home }}/zoo.cfg"
+    owner: solr
+    group: solr
+    mode: 0400
+
 - name: Create the Solr systemd service file
   template: src=solr.service.j2 dest=/etc/systemd/system/solr.service owner=solr group=solr mode=0644
   notify: 
