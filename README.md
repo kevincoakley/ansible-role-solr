@@ -3,13 +3,13 @@ ansible-role-solr
 
 [![Build Status](https://travis-ci.org/kevincoakley/ansible-role-solr.svg?branch=master)](https://travis-ci.org/kevincoakley/ansible-role-solr)
 
-An Ansible role that installs Apache Solr in either a standalone or replicated environment. Test with Solr version 5.3.1.
+An Ansible role that installs Apache Solr in either a standalone or replicated environment. Test with Solr version 6.5.0.
 
 Requirements
 ------------
 
-You must be running a Linux OS that has systemd enabled by default (RHEL 7, CentOS 7, Ubuntu 15.04+, Debian 8, etc). If you would like to run
-a seperate Zookeeper cluster, see https://galaxy.ansible.com/detail#/role/6555
+You must be running a Linux OS that has systemd enabled by default (RHEL 7, CentOS 7, Ubuntu 16.04+, Debian 8, etc). If you would like to run
+a separate Zookeeper cluster, see https://galaxy.ansible.com/detail#/role/6555
 
 Role Variables
 --------------
@@ -49,7 +49,7 @@ Example solr_playbook.yml:
 	  sudo: yes
 
 	  vars:
-	    solr_version: 5.4.0
+	    solr_version: 6.5.0
 	    solr_zookeeper_connect_string: 192.168.0.1:2181,192.168.0.2:2181,192.168.0.3:2181/solr
 
 	  roles:

@@ -29,6 +29,25 @@
   tags:
     - solr
 
+- name: Test the Solr role as a cluster on Centos
+  hosts: centos-cluster
+  become: yes
+  become_method: sudo
+
+  vars:
+    - zookeeper_ansible_host_group: centos-cluster
+    - zookeeper_server_variable:  facter_ipaddress
+    - solr_cluster: True
+    - solr_zookeeper_connect_string: "{{ facter_ipaddress }}:2181/solr"
+
+  roles:
+    - facter
+    - zookeeper
+    - ansible-role-solr
+    - solr-test
+
+  tags:
+    - centos-cluster
 
 - name: Stop the Docker containers
   hosts: localhost
