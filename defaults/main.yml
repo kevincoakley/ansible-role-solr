@@ -1,5 +1,6 @@
 ---
-solr_version: 6.4.2
+solr_version: 6.5.0
+solr_cluster: False
 solr_download_url: http://archive.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz
 solr_zookeeper_connect_string:
 solr_home: /mnt/solr/solr
