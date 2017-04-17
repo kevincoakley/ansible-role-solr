@@ -7,3 +7,8 @@ ansible_host=127.0.0.1
 [solr]
 ubuntu-system ansible_ssh_host=127.0.0.1 ansible_port=2200
 centos-system ansible_ssh_host=127.0.0.1 ansible_port=2222
+
+[centos-cluster]
+centos-cluster-0 ansible_ssh_host=127.0.0.1 ansible_port=2223 solr_master=True zookeeper_id=0
+centos-cluster-1 ansible_ssh_host=127.0.0.1 ansible_port=2224 solr_master=False zookeeper_id=1
+centos-cluster-2 ansible_ssh_host=127.0.0.1 ansible_port=2225 solr_master=False zookeeper_id=2
