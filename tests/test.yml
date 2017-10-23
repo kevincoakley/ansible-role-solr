@@ -38,7 +38,7 @@
     - zookeeper_ansible_host_group: centos-cluster
     - zookeeper_server_variable:  facter_ipaddress
     - solr_cluster: True
-    - solr_zookeeper_connect_string: "{{ facter_ipaddress }}:2181/solr"
+    - solr_zookeeper_connect_string: "{{ facter_ipaddress }}:2181"
 
   roles:
     - facter

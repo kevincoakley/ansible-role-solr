@@ -72,6 +72,23 @@
     group: solr
     mode: 0400
 
+- name: Check if chroot exists for clustered deployments
+  shell: "/opt/solr/bin/solr zk ls / -z {{ solr_zookeeper_connect_string }}"
+  register: zookeeper_chroot
+  changed_when: False
+  when:
+    - (solr_master | default(False)) == True
+    - solr_cluster == True
+
+- name: Add the chroot for clustered deployments is it doesn't exits
+  shell: "/opt/solr/bin/solr zk mkroot /solr -z {{ solr_zookeeper_connect_string }}"
+  when:
+    - (solr_master | default(False)) == True
+    - solr_cluster == True
+    - (zookeeper_chroot.stdout | search("solr")) == False
+  notify:
+  - restart solr
+
 - name: Create the Solr systemd service file
   template:
     src: solr.service.j2
