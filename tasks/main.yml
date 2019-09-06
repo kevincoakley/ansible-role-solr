@@ -2,6 +2,14 @@
 - name: Include OS family specific variables
   include_vars: "{{ ansible_os_family }}.yml"
 
+# See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
+- name: Ensure 'man' directory exists.
+  file:
+    path: /usr/share/man/man1
+    state: directory
+    recurse: true
+  when: ansible_distribution == 'Ubuntu'
+
 - name: Install common packages
   package:
     name: "{{ item }}"
@@ -9,15 +17,15 @@
 
 - name: Create the solr group
   group:
-    name: solr
+    name: "{{ solr_service_group }}"
     state: present
-    system: yes
+    system: true
 
 - name: Create the solr user
   user:
-    name: solr
-    groups: solr
-    append: yes
+    name: "{{ solr_service_username }}"
+    groups: "{{ solr_service_group }}"
+    append: true
 
 - name: Check if the version of Solr already exists
   stat:
@@ -28,80 +36,91 @@
   get_url:
     url: "{{ solr_download_url }}"
     dest: "/tmp/solr-{{ solr_version }}.tgz"
-  when: solr_path.stat.exists == False
+  when: not solr_path.stat.exists
+
+- name: Create the Solr extract directory
+  file:
+    path: "/opt/solr-{{ solr_version }}"
+    state: directory
+    owner: "{{ solr_service_username }}"
+    group: "{{ solr_service_group }}"
+    mode: '0755'
+  when: not solr_path.stat.exists
 
 - name: Extract Solr
   unarchive:
     src: "/tmp/solr-{{ solr_version }}.tgz"
-    dest: /opt
-    copy: no
-    owner: solr
-    group: solr
-  when: solr_path.stat.exists == False
+    dest: "/opt/solr-{{ solr_version }}"
+    copy: false
+    owner: "{{ solr_service_username }}"
+    group: "{{ solr_service_group }}"
+    extra_opts:
+      - --strip-components=1
+  when: not solr_path.stat.exists
 
 - name: Create a symlink for /opt/solr
   file:
     src: "/opt/solr-{{ solr_version }}"
     dest: /opt/solr
-    owner: solr
-    group: solr
+    owner: "{{ solr_service_username }}"
+    group: "{{ solr_service_group }}"
     state: link
-  when: solr_path.stat.exists == False
+  when: not solr_path.stat.exists
 
 - name: Create the Solr home dir
   file:
     path: "{{ solr_home }}"
     state: directory
-    owner: solr
-    group: solr
+    owner: "{{ solr_service_username }}"
+    group: "{{ solr_service_group }}"
     mode: 0755
 
 - name: Copy the solr config to the solr home directory
   copy:
     src: "{{ role_path }}/files/solr.xml"
     dest: "{{ solr_home }}/solr.xml"
-    owner: solr
-    group: solr
+    owner: "{{ solr_service_username }}"
+    group: "{{ solr_service_group }}"
     mode: 0400
 
 - name: Copy the zookeeper config to the solr home directory
   copy:
     src: "{{ role_path }}/files/zoo.cfg"
     dest: "{{ solr_home }}/zoo.cfg"
-    owner: solr
-    group: solr
+    owner: "{{ solr_service_username }}"
+    group: "{{ solr_service_group }}"
     mode: 0400
 
 - name: Check if chroot exists for clustered deployments
   shell: "/opt/solr/bin/solr zk ls / -z {{ solr_zookeeper_connect_string }}"
   register: zookeeper_chroot
-  changed_when: False
+  changed_when: false
   when:
-    - (solr_master | default(False)) == True
-    - solr_cluster == True
+    - (solr_master | default(False))
+    - solr_cluster
 
 - name: Add the chroot for clustered deployments is it doesn't exits
   shell: "/opt/solr/bin/solr zk mkroot /solr -z {{ solr_zookeeper_connect_string }}"
   when:
-    - (solr_master | default(False)) == True
-    - solr_cluster == True
-    - (zookeeper_chroot.stdout | search("solr")) == False
+    - (solr_master | default(False))
+    - solr_cluster
+    - not (zookeeper_chroot.stdout | search("solr"))
   notify:
-  - restart solr
+    - restart solr
 
 - name: Create the Solr systemd service file
   template:
     src: solr.service.j2
     dest: /etc/systemd/system/solr.service
-    owner: solr
-    group: solr
+    owner: "{{ solr_service_username }}"
+    group: "{{ solr_service_group }}"
     mode: 0644
   notify:
-  - reload systemd
-  - restart solr
+    - reload systemd
+    - restart solr
 
 - name: Ensure Solr is started and enabled on boot
   systemd:
     name: solr
     state: started
-    enabled: yes
+    enabled: true
