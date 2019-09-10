@@ -110,7 +110,7 @@
   when:
     - (solr_master | default(False))
     - solr_cluster
-    - not (zookeeper_chroot.stdout | search("solr"))
+    - '"solr" not in zookeeper_chroot.stdout'
   notify:
     - restart solr
 
