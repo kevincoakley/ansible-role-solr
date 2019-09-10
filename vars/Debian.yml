@@ -1,4 +1,6 @@
 ---
 solr_packages:
-  - openjdk-8-jre-headless
   - unzip
+solr_java_package:
+  11: openjdk-11-jre-headless
+  8: openjdk-8-jre-headless

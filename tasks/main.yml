@@ -2,6 +2,11 @@
 - name: Include OS family specific variables
   include_vars: "{{ ansible_os_family }}.yml"
 
+- name: Install common packages
+  package:
+    name: "{{ item }}"
+  with_items: "{{ solr_packages }}"
+
 # See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
 - name: Ensure 'man' directory exists.
   file:
@@ -10,10 +15,11 @@
     recurse: true
   when: ansible_distribution == 'Ubuntu'
 
-- name: Install common packages
+- name: Install Java packages
   package:
     name: "{{ item }}"
-  with_items: "{{ solr_packages }}"
+  with_items: "{{ solr_java_package[solr_java_version] }}"
+  when: solr_java_install
 
 - name: Create the solr group
   group:
