@@ -3,6 +3,8 @@ language: python
 services: docker
 
 env:
+  global:
+    - ANSIBLE_CALLBACK_WHITELIST: profile_tasks
   matrix:
     # Test defaults.
     - MOLECULE_DISTRO: centos7
