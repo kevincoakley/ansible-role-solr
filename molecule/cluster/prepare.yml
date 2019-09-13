@@ -5,11 +5,3 @@
 
   roles:
     - role: kevincoakley.facter
-
-  post_tasks:
-    - gem:
-        name: facter
-        state: present
-        user_install: false
-      when:
-        - ansible_os_family == 'Debian'
