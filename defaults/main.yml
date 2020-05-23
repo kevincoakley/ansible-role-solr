@@ -1,5 +1,5 @@
 ---
-solr_version: 8.2.0
+solr_version: 8.5.1
 solr_cluster: false
 solr_download_url: http://archive.apache.org/dist/lucene/solr/{{ solr_version }}/solr-{{ solr_version }}.tgz
 solr_zookeeper_connect_string:
