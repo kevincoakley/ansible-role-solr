@@ -1,7 +1,7 @@
 ansible-role-solr
 =================
 
-[![Build Status](https://travis-ci.org/kevincoakley/ansible-role-solr.svg?branch=master)](https://travis-ci.org/kevincoakley/ansible-role-solr)
+![](https://github.com/kevincoakley/ansible-role-solr/workflows/Molecule%20Test/badge.svg)
 
 An Ansible role that installs Apache Solr in either a standalone or replicated environment. Test with Solr version 8.5.1 on CentOS 7, CentOS 8, Ubuntu 18.04 and Ubuntu 20.04.
 
