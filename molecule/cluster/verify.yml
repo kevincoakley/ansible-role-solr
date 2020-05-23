@@ -1,16 +1,9 @@
 ---
-- name: Converge
+- name: Verify
   hosts: all
   become: true
 
-  roles:
-    - role: ansible-role-solr
-
-  post_tasks:
-    - name: Give the Solr time to start
-      pause:
-        seconds: 30
-
+  tasks:
     - name: Verify that Solr is running on port 8983
       uri:
         url: http://127.0.0.1:8983/solr/
