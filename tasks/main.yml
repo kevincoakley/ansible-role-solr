@@ -2,24 +2,23 @@
 - name: Include OS family specific variables
   include_vars: "{{ ansible_os_family }}.yml"
 
+- name: Include OS specific tasks
+  include_tasks: "{{ ansible_os_family }}.yml"
+
 - name: Install common packages
   package:
     name: "{{ item }}"
   with_items: "{{ solr_packages }}"
-
-# See: https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=863199
-- name: Ensure 'man' directory exists.
-  file:
-    path: /usr/share/man/man1
-    state: directory
-    recurse: true
-  when: ansible_distribution == 'Ubuntu'
+  retries: 5
+  delay: 5
 
 - name: Install Java packages
   package:
     name: "{{ item }}"
   with_items: "{{ solr_java_package[solr_java_version] }}"
   when: solr_java_install
+  retries: 5
+  delay: 5
 
 - name: Create the solr group
   group:
@@ -43,6 +42,8 @@
     url: "{{ solr_download_url }}"
     dest: "/tmp/solr-{{ solr_version }}.tgz"
   when: not solr_path.stat.exists
+  retries: 5
+  delay: 5
 
 - name: Create the Solr extract directory
   file:
