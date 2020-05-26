@@ -3,10 +3,11 @@ dependency:
   name: galaxy
 driver:
   name: docker
-lint:
-  name: yamllint
-  options:
-    config-file: molecule/default/yaml-lint.yml
+lint: |
+  set -e
+  yamllint -c molecule/yaml-lint.yml .
+  ansible-lint
+  flake8
 platforms:
   - name: instance-1
     image: "geerlingguy/docker-${MOLECULE_DISTRO:-centos7}-ansible:latest"
@@ -49,10 +50,11 @@ platforms:
       - solr
 provisioner:
   name: ansible
-  lint:
-    name: ansible-lint
+  log: false
+  options:
+    vvv: false
   playbooks:
-    converge: ${MOLECULE_PLAYBOOK:-playbook.yml}
+    converge: ${MOLECULE_PLAYBOOK:-converge.yml}
   inventory:
     host_vars:
       instance-1:
@@ -67,6 +69,4 @@ provisioner:
 scenario:
   name: cluster
 verifier:
-  name: testinfra
-  lint:
-    name: flake8
+  name: ansible
